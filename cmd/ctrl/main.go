@@ -4,7 +4,7 @@ import (
   "fmt"
 )
 
-func main() {
+func help() {
   fmt.Println("ctrl -- A command-line development utility")
   fmt.Println()
   fmt.Println("Usage:")
@@ -21,4 +21,8 @@ func main() {
   fmt.Println("  -c,--config\tThe location of the configuration file")
   fmt.Println("  -h,--help\tDisplays this message")
   fmt.Println("  -v,--version\tDisplays the installed Control version")
+}
+
+func main() {
+  help()
 }
