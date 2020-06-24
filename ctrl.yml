@@ -1,0 +1,7 @@
+version: 'DEV'
+
+up:
+  - type: shell
+    script:
+      - go version > version.txt
+

@@ -4,14 +4,16 @@ import (
   "flag"
   "fmt"
   "os"
+
+  "github.com/itshaydendev/control/internal"
 )
 
 const (
-        InfoColor    = "\033[1;34m%s\033[0m"
-        NoticeColor  = "\033[1;36m%s\033[0m"
-        WarningColor = "\033[1;33m%s\033[0m"
-        ErrorColor   = "\033[1;31m%s\033[0m"
-        DebugColor   = "\033[0;36m%s\033[0m"
+  InfoColor    = "\033[1;34m%s\033[0m"
+  NoticeColor  = "\033[1;36m%s\033[0m"
+  WarningColor = "\033[1;33m%s\033[0m"
+  ErrorColor   = "\033[1;31m%s\033[0m"
+  DebugColor   = "\033[0;36m%s\033[0m"
 )
 
 func help() {
@@ -56,17 +58,28 @@ func main() {
   }
 
   switch os.Args[1] {
-    case "up":
-      fmt.Fprintf(os.Stdout, NoticeColor, "ctrl v1.0.0\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " |----------------------------------|\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " | NOT IMPLEMENTED                  |\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " |----------------------------------|\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " | This feature hasn't been         |\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " | implemented yet.                 |\n")
-      fmt.Fprintf(os.Stdout, ErrorColor, " |----------------------------------|\n")
-
-    default:
-      help()
+  case "up":
+    rawConfig := internal.ReadConfig()
+    config, err := internal.ParseConfig(rawConfig)
+    if err != nil {
+      fmt.Fprintf(
+        os.Stderr,
+        ErrorColor,
+        "There was a problem parsing the configuration file in ctrl.yml")
+      fmt.Fprintf(os.Stderr, ErrorColor, err.Error())
       os.Exit(1)
+    }
+    for _,task := range config.Up {
+      fmt.Fprintf(os.Stdout, NoticeColor, "Running `" + task.Type + "` task...\n")
+      internal.RunTask(task)
+    }
+    fmt.Fprintf(
+      os.Stdout,
+      InfoColor,
+      "Successfully prepared project for development.\n")
+
+  default:
+    help()
+    os.Exit(1)
   }
 }
